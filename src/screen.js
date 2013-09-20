@@ -16,12 +16,14 @@ var Screen = function(){
 
     var camera, scene, renderer;
 
-    var video, texture, material, mesh;
+    var video, texture, material, mesh, effectBloom;
 
     var composer;
 
     var mouseX = 0;
     var mouseY = 0;
+
+    var time = 0;
 
     var windowHalfX = window.innerWidth / 2;
     var windowHalfY = window.innerHeight / 2;
@@ -78,7 +80,7 @@ var Screen = function(){
         // postprocessing
 
         var renderModel = new THREE.RenderPass( scene, camera );
-        var effectBloom = new THREE.BloomPass( 1.3 );
+        effectBloom = new THREE.BloomPass( 1.3 );
         var effectCopy = new THREE.ShaderPass( THREE.CopyShader );
 
         effectCopy.renderToScreen = true;
@@ -106,10 +108,12 @@ var Screen = function(){
 
     function animate() {
         requestAnimationFrame( animate );
+        time += 1/60;
         render();
     }
 
     function render() {
+        effectBloom.copyUniforms[ "opacity" ].value = .3+Math.abs(Math.sin(time));
         renderer.clear();
         composer.render();
     }
